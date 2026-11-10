@@ -359,9 +359,12 @@ namespace HolaMundo
             Console.WriteLine("==================================================");
         }
 
-        // Opción 5: Genero los ficheros .txt individuales para cada equipo de forma limpia y segura
+
+
+        // hacemos el metodo para generar ficheros de texto individuales por equipo con su historial de partidos
         static void GenerarFicherosPorEquipo()
         {
+            // Cargamos la lista de partidos desde el CSV
             List<Partido> partidos = CargarPartidos();
             if (partidos.Count == 0) return;
 
@@ -369,13 +372,15 @@ namespace HolaMundo
             string carpetaSalida = "FicherosEquipos";
             Directory.CreateDirectory(carpetaSalida);
 
-            // Saco la lista de equipos únicos limpiando espacios por si acaso
+            // Creamos una lista para almacenar los nombres de los equipos únicos
             List<string> listaEquipos = new List<string>();
             foreach (var p in partidos)
             {
+                // Obtenemos los nombres de los equipos local y visitante, eliminando espacios en blanco
                 string local = p.EquipoLocal?.Trim();
                 string visitante = p.EquipoVisitante?.Trim();
 
+                // Comprobamos si el equipo local ya está en la lista y lo añadimos si no está presente
                 if (!string.IsNullOrEmpty(local))
                 {
                     bool existeLocal = false;
@@ -385,7 +390,7 @@ namespace HolaMundo
                     }
                     if (!existeLocal) listaEquipos.Add(local);
                 }
-
+                
                 if (!string.IsNullOrEmpty(visitante))
                 {
                     bool existeVisitante = false;
@@ -396,12 +401,14 @@ namespace HolaMundo
                     if (!existeVisitante) listaEquipos.Add(visitante);
                 }
             }
-
+            // Recorremos la lista de equipos y generamos un archivo de texto para cada uno con su historial de partidos
             foreach (string eq in listaEquipos)
             {
+                // Filtramos los partidos del equipo actual y los almacenamos en una lista
                 List<Partido> misPartidos = new List<Partido>();
                 foreach (var p in partidos)
                 {
+                    // Comprobamos si el equipo actual es el local o visitante en cada partido y lo añadimos a la lista de partidos del equipo
                     if ((p.EquipoLocal != null && p.EquipoLocal.Trim().Equals(eq, StringComparison.OrdinalIgnoreCase)) || 
                         (p.EquipoVisitante != null && p.EquipoVisitante.Trim().Equals(eq, StringComparison.OrdinalIgnoreCase)))
                     {
@@ -409,7 +416,7 @@ namespace HolaMundo
                     }
                 }
 
-                // Limpio caracteres inválidos y espacios para evitar que Windows deniegue el acceso
+                // Generamos un nombre de archivo limpio eliminando caracteres inválidos para nombres de archivo
                 string nombreLimpio = "";
                 char[] caracteresInvalidos = Path.GetInvalidFileNameChars();
                 foreach (char c in eq)
@@ -428,16 +435,16 @@ namespace HolaMundo
                         nombreLimpio += c;
                     }
                 }
-                
+                // Añadimos la extensión .txt al nombre del archivo y combinamos con la ruta de salida
                 nombreLimpio = nombreLimpio.Trim() + ".txt";
                 string rutaCompleta = Path.Combine(carpetaSalida, nombreLimpio);
-
+                // Creamos una lista de cadenas para almacenar el contenido del archivo de texto
                 List<string> contenidoFichero = new List<string> { $"Historial de partidos de: {eq}" };
                 foreach (var p in misPartidos)
                 {
                     contenidoFichero.Add($"Jornada {p.Jornada}: {p.EquipoLocal} {p.Resultado} {p.EquipoVisitante} (MVP: {p.Mvp})");
                 }
-                
+                // Escribimos todas las líneas en el archivo de texto correspondiente al equipo
                 File.WriteAllLines(rutaCompleta, contenidoFichero);
             }
 
