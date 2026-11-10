@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Cambia "Program.cs" por el nombre exacto de tu archivo, por ejemplo: programa_Jorge.cs -->
+    <Compile Include="programa_Jorge.cs" />
+  </ItemGroup>
+
+</Project>
